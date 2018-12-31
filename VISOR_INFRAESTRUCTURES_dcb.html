@@ -1,0 +1,554 @@
+<html lang="es">
+<head>
+    <title>Visor Infraestructuras</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="David Castellvell" content="autor" />
+    <meta name="Gestió d'infraestructures viarias" content="Visor web per a la gestió d'infraestructures viaries - Treball Final de Màster - Sistemes d'Informació Geogràfica">
+    <meta name="robots" content="index,follow">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.0/leaflet.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- <script>
+             L_PREFER_CANVAS = true;
+        </script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.0/leaflet.js"></script>
+  <!-- plugin Proj4Leaflet -->
+    <script src="http://rawgithub.com/kartena/Proj4Leaflet/master/lib/proj4-compressed.js"></script>
+    <script src="https://rawgithub.com/kartena/Proj4Leaflet/master/src/proj4leaflet.js"></script>
+  <!-- pluguin GeoJSON AJAX -->
+    <script src="https://calvinmetcalf.github.io/leaflet-ajax/dist/leaflet.ajax.js"></script>
+  <!-- fitxer on es defineixen les diferents capes de GeoJSON -->
+    <script src="js/GeoJSON_layers.js"></script>
+    <!-- enllacem css i js del pluguin leaflet search -->
+    <script src="js/leaflet-search.min.js"></script>
+    <link rel="stylesheet" href="css/leaflet-search.min.css" />
+  <!-- enllacem css i js del pluguin leaflet-draw ??-->
+    <script src="src-draw/Leaflet.draw.js"></script>
+    <script src="src-draw/Leaflet.Draw.Event.js"></script>
+    <link rel="stylesheet" href="src-draw/leaflet.draw.css" />
+    <script src="src-draw/Toolbar.js"></script>
+    <script src="src-draw/Tooltip.js"></script>
+    <script src="src-draw/ext/GeometryUtil.js"></script>
+    <script src="src-draw/ext/LatLngUtil.js"></script>
+    <script src="src-draw/ext/LineUtil.Intersect.js"></script>
+    <script src="src-draw/ext/Polygon.Intersect.js"></script>
+    <script src="src-draw/ext/Polyline.Intersect.js"></script>
+    <script src="src-draw/ext/TouchEvents.js"></script>
+    <script src="src-draw/draw/DrawToolbar.js"></script>
+    <script src="src-draw/draw/handler/Draw.Feature.js"></script>
+    <script src="src-draw/draw/handler/Draw.SimpleShape.js"></script>
+    <script src="src-draw/draw/handler/Draw.Polyline.js"></script>
+    <script src="src-draw/draw/handler/Draw.Marker.js"></script>
+    <script src="src-draw/draw/handler/Draw.Circle.js"></script>
+    <script src="src-draw/draw/handler/Draw.CircleMarker.js"></script>
+    <script src="src-draw/draw/handler/Draw.Polygon.js"></script>
+    <script src="src-draw/draw/handler/Draw.Rectangle.js"></script>
+    <script src="src-draw/edit/EditToolbar.js"></script>
+    <script src="src-draw/edit/handler/EditToolbar.Edit.js"></script>
+    <script src="src-draw/edit/handler/EditToolbar.Delete.js"></script>
+    <script src="src-draw/Control.Draw.js"></script>
+    <script src="src-draw/edit/handler/Edit.Poly.js"></script>
+    <script src="src-draw/edit/handler/Edit.SimpleShape.js"></script>
+    <script src="src-draw/edit/handler/Edit.Rectangle.js"></script>
+    <script src="src-draw/edit/handler/Edit.Marker.js"></script>
+    <script src="src-draw/edit/handler/Edit.CircleMarker.js"></script>
+    <script src="src-draw/edit/handler/Edit.Circle.js"></script>
+  <!-- Enllacem leaflet-buffer -->
+    <script src="js/leaflet.buffer.min.js"></script>
+  <!-- Enllacem leaflet-browser.print -->
+    <script src="js/leaflet.browser.print.js"></script>
+
+    <link rel="stylesheet" href="css/leaflet-panel-layers.css"/>
+    <script src="js/leaflet-panel-layers.js"></script>
+
+  <!-- enllacem el controlador per carregar fitxers locals//primer enllacem amb togeoJson//-->
+    <script src="https://unpkg.com/togeojson@0.16.0"></script> 
+    <script src="js/leaflet.filelayer.js"></script>
+    
+
+  <style>
+    ul,ol{list-style:none}
+    h1,h2,h3,h4,h5,h6,pre,code{font-size:1em;}
+    ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,body,html,p,blockquote,fieldset{
+    margin:0;padding:0;line-height:1; list-style:none;}
+    a img,:link img,:visited img, fieldset{border:none;}
+    input[type=submit], input[type=reset], input[type=button] { *filter:chroma(color=#000000); }   
+    hr { clear:both; height:0; line-height:0; margin:0; padding:0; border:0; filter:alpha(opacity=0); }    
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .header {
+      position: relative;
+      background-color: #B40404; 
+      opacity: 0.7;
+      height: 15%;
+      min-height: 100px;
+    }
+    .logo-image { 
+      position: absolute; 
+      height:65px; 
+      margin-top: 20px;
+      margin-left: 15px
+    }
+    #map {
+      height: 85%;
+      width: 100%;
+    }
+    .icon {
+      max-width: 70%;
+      max-height: 70%;
+      margin: 54px;
+    }
+
+  </style>
+<script>
+    var map, Ortocache, orto56_57, orto94, orto08, TopoCache, TermeMunis, TermeComs, TermeProvs, Cadastre, Urbanistic;
+    var Tronc_AP7_VilaS, Tronc_AP7_Vilablareix, Remod_Enllaç, GI9903, Remod_EnllaçVF, Remod_EnllaçSSad, Remod_EnllaçGelida, Remod_EnllaçMartorell;
+    var controlCapas, searchControl, searchControl_2, drawControl, PrintControl, Escala;
+    var crs25831 = new L.Proj.CRS('EPSG:25831', '+proj=utm +zone=31 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs',
+        {
+            resolutions: [1100, 550, 275, 100, 50, 25, 10, 5, 2, 1, 0.5, 0.25]
+        }
+    );
+    $(document).ready(function () {
+        map = L.map('map', {
+            center: [41.4624985, 1.867519],
+            zoom: 3,
+            crs: crs25831,
+            continuousWorld: true,
+            worldCopyJump: false,
+            zoomControl: false,
+            preferCanvas: true
+        });
+        OrtoCache = L.tileLayer.wms("https://geoserveis.icgc.cat/icc_mapesbase/wms/service?", {
+            layers: 'orto25c',
+            format: 'image/jpeg',
+            crs: crs25831,
+            continuousWorld: true,
+            attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
+        }).addTo(map);
+
+        orto56_57 = L.tileLayer.wms("https://geoserveis.icgc.cat/icc_ortohistorica/wms/service?", {
+        layers: 'ovab5m',
+        format: 'image/jpeg',
+        crs: crs25831,
+        continuousWorld: true,
+        attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
+      });
+
+      orto94 = L.tileLayer.wms("https://geoserveis.icgc.cat/icc_ortohistorica/wms/service?", {
+        layers: 'orto5m1994',
+        format: 'image/jpeg',
+        crs: crs25831,
+        continuousWorld: true,
+        attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
+      });
+
+      orto08 = L.tileLayer.wms("https://geoserveis.icgc.cat/icc_ortohistorica/wms/service?", {
+        layers: 'orto25c2009',
+        format: 'image/jpeg',
+        crs: crs25831,
+        continuousWorld: true,
+        attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
+      });
+
+      TopoCache = L.tileLayer.wms(" http://geoserveis.icc.cat/icc_mapesmultibase/utm/wmts/service?", {
+        layers: 'topo',
+        format: 'image/jpeg',
+        crs: crs25831,
+        continuousWorld: true,
+        attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
+      });
+
+      Urbanistic = L.tileLayer.wms("http://dtes.gencat.cat/webmap/MUC/service.svc/get?", {
+        layers: ['MUC', 'MUC_Codis_Mun'],
+        attribution:'Departament de Territori i Sostenibilitat Generalitat de Catalunya' 
+      });
+
+      TermeMunis = L.tileLayer.wms("http://geoserveis.icc.cat/icgc_bm5m/wms/service?", {
+        layers: ['10_MUNICIPI_PC','60_NOMMUNICIPI_TX'],
+        format: 'image/png',
+        crs: crs25831,
+        transparent: true,
+        continuousWorld: true,
+        attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
+      });
+      TermeComs = L.tileLayer.wms("http://geoserveis.icc.cat/icgc_bm5m/wms/service?", {
+        layers: ['20_COMARCA_PC','70_NOMCOMARCA_TX'],
+        format: 'image/png',
+        crs: crs25831,
+        transparent: true,
+        continuousWorld: true,
+        attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
+      });
+      TermeProvs = L.tileLayer.wms("http://geoserveis.icc.cat/icgc_bm5m/wms/service?", {
+        layers: '30_PROVINCIA_PC',
+        format: 'image/png',
+        crs: crs25831,
+        transparent: true,
+        continuousWorld: true,
+        attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
+      });
+
+      Cadastre = L.tileLayer.wms("https://ovc.catastro.meh.es/Cartografia/WMS/ServidorWMS.aspx?", {
+        layers: "Catastro",
+        format: 'image/jpeg',
+        continuousWorld: true,
+        version: '1.1.1',
+        attribution: "DIRECCION GENERAL DEL CATASTRO"
+      });
+
+
+      var GrupCapes = L.layerGroup([Tronc_AP7_VilaS, Tronc_AP7_Vilablareix, Remod_EnllaçVS, GI9903, Remod_EnllaçVF, Remod_EnllaçSSad, Remod_EnllaçGelida,Remod_EnllaçMartorell]).addTo(map);
+      
+      searchControl = new L.Control.Search({
+        layer: GrupCapes,
+        propertyName: 'Codi_finca',
+        marker: false,
+        zoom: 11,
+        textPlaceholder: 'Busca per codi de finca',
+      });
+
+      searchControl.on('search:locationfound', function (e) {
+        e.layer.setStyle({ fillColor: '#00FF00'});
+        if (e.layer._popup)
+          e.layer.openPopup();
+      }).on('search:collapsed', function (e) {
+
+        Tronc_AP7_VilaS.eachLayer(function (layer) {
+          Tronc_AP7_VilaS.resetStyle(layer);
+        });
+        Tronc_AP7_Vilablareix.eachLayer(function (layer) {
+          Tronc_AP7_Vilablareix.resetStyle(layer);
+        });
+        Remod_EnllaçVS.eachLayer(function (layer) {
+        });
+        GI9903.eachLayer(function (layer) {
+          GI9903.resetStyle(layer);
+        });
+        Remod_EnllaçVF.eachLayer(function (layer) {
+          Remod_EnllaçVF.resetStyle(layer);
+        });
+        Remod_EnllaçSSad.eachLayer(function (layer) {
+          Remod_EnllaçSSad.resetStyle(layer);
+        });
+        Remod_EnllaçGelida.eachLayer(function (layer) {
+          Remod_EnllaçGelida.resetStyle(layer);
+        });
+      });
+
+      searchControl_2 = new L.Control.Search({
+        layer: GrupCapes,
+        propertyName: 'Titular',
+        marker: false,
+        zoom: 11,
+        textPlaceholder: 'Busca per titular'
+      });
+
+      searchControl_2.on('search:locationfound', function (e) {
+
+        e.layer.setStyle({ fillColor: '#00FF00'});
+        if (e.layer._popup)
+          e.layer.openPopup();
+      });
+
+      var drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
+
+      drawControl = new L.Control.Draw({
+        position: 'topleft',
+        draw: {
+          polyline: true,
+          polygon: true,
+          rectangle: false,
+          circle: false,
+          marker: true,
+          circlemarker: false
+        },
+        edit: {
+          featureGroup: drawnItems,
+          remove: true,
+          buffer: {
+            replacePolylines: false,
+            separateBuffer: true,
+            bufferStyle:{
+            dashArray: '2 5',
+              opacity: 0.5,
+              fillColor: '#FF0000',}
+          },
+        }
+      });
+      
+      L.drawLocal.draw.toolbar.buttons.polygon = 'Dibuixa un polígon';
+      L.drawLocal.draw.toolbar.buttons.polyline = 'Dibuixa un línea';
+      L.drawLocal.draw.toolbar.buttons.rectangle = 'Dibuixa un rectangle';
+      L.drawLocal.draw.toolbar.buttons.marker = 'Posa un marcador';
+      L.drawLocal.draw.toolbar.actions.title = 'Cancela el dibuix';
+      L.drawLocal.draw.toolbar.actions.text = 'Cancela';
+      L.drawLocal.draw.toolbar.finish.title = 'Finalitza el dibuix';
+      L.drawLocal.draw.toolbar.finish.text = 'Finalitza';
+      L.drawLocal.draw.toolbar.undo.title = 'Esborrar últim punt dibuixat';
+      L.drawLocal.draw.toolbar.undo.text = 'Esborrar últim punt';
+      L.drawLocal.draw.handlers.marker.tooltip.start = 'Clica al mapa per posar un marcador de cercle.';
+      L.drawLocal.draw.handlers.polygon.tooltip.start = 'Clica per començar a dibuixar un polígon.';
+      L.drawLocal.draw.handlers.polygon.tooltip.cont = 'Clica per continuar el dibuix.';
+      L.drawLocal.draw.handlers.polygon.tooltip.end = 'Clica sobre el primer punt per finalitzar el polígon.';
+      L.drawLocal.draw.handlers.polyline.tooltip.start = 'Clica per començar a dibuixar una polilínea.';
+      L.drawLocal.draw.handlers.polyline.tooltip.cont = 'Clica per continuar el dibuix.';
+      L.drawLocal.draw.handlers.polyline.tooltip.end = 'Clica sobre el primer punt per finalitzar la polilínia.';
+      L.drawLocal.draw.handlers.polyline.error = '<strong>Error:</strong> Els marges no es poden entrecreuar!';
+      L.drawLocal.draw.handlers.rectangle.tooltip.start = 'Clica i estira per dibuixar un rectangle.';
+      L.drawLocal.edit.toolbar.actions.save.title = 'Guarda els canvis';
+      L.drawLocal.edit.toolbar.actions.save.text = 'Guarda';
+      L.drawLocal.edit.toolbar.actions.cancel.title = "Cancel·la l'edició, descarta els canvis";
+      L.drawLocal.edit.toolbar.actions.cancel.text = 'Cancel·la';
+      L.drawLocal.edit.toolbar.actions.clearAll.title = 'Esborra tots els dibuixos';
+      L.drawLocal.edit.toolbar.actions.clearAll.text = 'Esborra-ho tot';
+      L.drawLocal.edit.toolbar.buttons.edit = 'Edita els dibuixos';
+      L.drawLocal.edit.toolbar.buttons.editDisabled = 'No hi ha dibuixos per editar';
+      L.drawLocal.edit.toolbar.buttons.remove = 'Esborrar dibuixos';
+      L.drawLocal.edit.toolbar.buttons.removeDisabled = 'No hi ha dibuixos per esborrar';
+      L.drawLocal.edit.handlers.edit.tooltip.text = 'Estira els vertex o els matcadors per editar els dibuixos.';
+      L.drawLocal.edit.handlers.edit.tooltip.subtext = 'Clica cancelar per desfer els canvis.'
+      L.drawLocal.edit.handlers.remove.tooltip.text = 'Clica un dibuix per esborrar-lo.';
+      L.drawLocal.edit.toolbar.buttons.buffer = 'Estira el dibuix.';
+      L.drawLocal.edit.toolbar.buttons.bufferDisabled = 'No hi ha dibuixos per estirar.';
+      L.drawLocal.edit.handlers.buffer.tooltip.text = 'Clica i estira el dibuix a la distància requerida';
+
+      // Truncate value based on number of decimals
+      var _round = function (num, len) {
+        return Math.round(num * (Math.pow(10, len))) / (Math.pow(10, len));
+      };
+      // Helper method to format LatLng object (x.xxxxxx, y.yyyyyy)
+      var strLatLng = function (latlng) {
+        return "(" + _round(latlng.lat, 6) + ", " + _round(latlng.lng, 6) + ")";
+      };
+      // Generate popup content based on layer type
+      // - Returns HTML string, or null if unknown object
+      var getPopupContent = function (layer) {
+        // Marker - add lat/long
+        if (layer instanceof L.Marker) {
+          return strLatLng(layer.getLatLng());
+          // Rectangle/Polygon - area
+        } else if (layer instanceof L.Polygon) {
+          var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
+            area = L.GeometryUtil.geodesicArea(latlngs);
+            distance = 0;
+            for (var i = 0; i < latlngs.length - 1; i++) {
+              distance += latlngs[i].distanceTo(latlngs[i + 1]);
+            }
+          return "Distància: " + _round(distance, 2) + " m"+"<br />"
+            +"Àrea: " + L.GeometryUtil.readableArea(area, true);
+          // Polyline - distance
+        } else if (layer instanceof L.Polyline) {
+          var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
+            distance = 0;
+          if (latlngs.length < 2) {
+            return "Distància: N/A";
+          } else {
+            for (var i = 0; i < latlngs.length - 1; i++) {
+              distance += latlngs[i].distanceTo(latlngs[i + 1]);
+            }
+            return "Distància: " + _round(distance, 2) + " m";
+          }
+        }
+        return null;
+      };
+      // Object created - bind popup to layer, add to feature group
+      map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+        var content = getPopupContent(layer);
+        if (content !== null) {
+          layer.bindPopup(content);
+        }
+        drawnItems.addLayer(layer);
+      });
+      // Object(s) edited - update popups
+      map.on(L.Draw.Event.EDITED, function (event) {
+        var layers = event.layers,
+          content = null;
+        layers.eachLayer(function (layer) {
+          content = getPopupContent(layer);
+          if (content !== null) {
+            layer.setPopupContent(content);
+          }
+        });
+      });
+
+      var baseMaps = [
+        {
+        group:" Mapes Base",
+        layers:[
+        {
+        name:"Ortofoto vigent",
+        layer: OrtoCache
+      },
+        {
+          name:"Ortofoto 2008",
+          layer: orto08,
+        },
+        {
+          name:"Ortofoto 1994",
+          layer: orto94
+        },
+        {
+          name:"Vol Americà 56-57",
+          layer: orto56_57
+        },
+        {
+          name:"Topogràfic-icgc",
+          layer: TopoCache
+        },
+        {
+          name:"Cadastre",
+          layer: Cadastre
+        },
+        {
+          name:"Mapa Urbanístic de Catalunya",
+          layer: Urbanistic
+        },
+        ]
+      }
+    ];
+      var overlayMaps = [
+        { 
+          group:"Límits administratius",
+          collapsed: true,
+          layers:[
+            {
+              name:"Termes Municipals",
+              layer:TermeMunis
+            },
+            {
+              name:"Termes comarca",
+              layer: TermeComs
+            },
+            {
+              name:"Termes Provincia",
+              layer: TermeProvs
+            }
+          ]
+        },
+        {
+          group:"Autopista AP-7",
+          layers:[
+            {
+              name:"Tronc AP-7 Vila-Seca",
+              layer:Tronc_AP7_VilaS
+            },
+            {
+              name:"Enllaç Vila-Seca",
+              layer: Remod_EnllaçVS
+            },
+            {
+              name:"Enllaços Vilafranca",
+              layer:  Remod_EnllaçVF,
+            },
+            {
+              name:"Enllaç Sant Sadurní",
+              layer:Remod_EnllaçSSad
+            },
+            {
+              name:"Enllaç de Gelida",
+              layer:Remod_EnllaçGelida
+            },
+            {
+              name:"Enllaç de Martorell",
+              layer:Remod_EnllaçMartorell
+            },
+            {
+              name:"Tronc AP-7 Vilablareix",
+              layer:Tronc_AP7_Vilablareix
+            },
+            {
+              name:"Projecte 98-GI-9903",
+              layer:GI9903
+            },
+          ]
+        },
+        {
+          name:"capa de dibuix",
+          layer: drawnItems
+        },
+      ];
+      
+      controlCapas = L.control.panelLayers(baseMaps, overlayMaps,
+      {
+	          // compact: true,
+	          // collapsed: true,	
+	      collapsibleGroups: true
+      });
+
+        PrintControl = L.control.browserPrint({
+        closePopupsOnPrint: false,
+        title: "imprimeix el mapa",
+        printModesNames: {
+        Custom: "Seleccionar àrea",
+        Portrait: "Vertical",
+        Landscape: "Horitzontal"
+        }
+      });
+
+      Escala = L.control.scale(
+        {
+          imperial: false
+        }
+      );
+      Zoom = L.control.zoom ({
+        zoomInTitle: 'Augmenta el zoom',
+        zoomOutTitle : 'Disminueix el zoom'
+      });
+
+      var LoadControlStyle = {
+            color: 'red',
+            opacity: 1.0,
+            fillOpacity: 0.5,
+            weight: 2,
+            clickable: false
+        };
+        L.Control.FileLayerLoad.TITLE= 'Carrega fitxers KML, GPX i GeoJson'
+        // L.Control.FileLayerLoad.LABEL = '<img class="icon" src="images/folder.svg" alt="file icon"/>';
+        var loadControl = L.Control.fileLayerLoad({
+            fitBounds: true,
+            layerOptions: {
+                style: LoadControlStyle,
+                pointToLayer: function (data, latlng) {
+                    return L.circleMarker(
+                        latlng,
+                        { style: LoadControlStyle }
+                    );
+                }
+            }
+        });
+
+
+      Zoom.addTo(map)
+      loadControl.addTo(map);
+
+      loadControl.loader.on('data:loaded', function (e) {
+            var layer = e.layer;
+            console.log(layer);
+        });
+
+      PrintControl.addTo(map);
+      map.addControl(searchControl);
+      map.addControl(searchControl_2);
+      map.addControl(drawControl);
+      controlCapas.addTo(map)
+      Escala.addTo(map);
+    });
+
+   
+</script>
+</head>         
+<body>
+    <div class="header">
+        <p>
+            <img class="logo-image" src="images/logo-visor.png">
+        </p>
+    </div>
+    <div id="map"></div>
+</body>
+</html>
