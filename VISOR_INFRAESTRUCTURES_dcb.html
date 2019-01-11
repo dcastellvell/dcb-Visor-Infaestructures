@@ -237,6 +237,9 @@
         Remod_EnllaçGelida.eachLayer(function (layer) {
           Remod_EnllaçGelida.resetStyle(layer);
         });
+        Remod_EnllaçMartorell.eachLayer(function (layer) {
+          Remod_EnllaçMartorell.resetStyle(layer);
+        });
       });
 
       searchControl_2 = new L.Control.Search({
@@ -252,6 +255,31 @@
         e.layer.setStyle({ fillColor: '#00FF00'});
         if (e.layer._popup)
           e.layer.openPopup();
+      }).on('search:collapsed', function (e) {
+
+        Tronc_AP7_VilaS.eachLayer(function (layer) {
+          Tronc_AP7_VilaS.resetStyle(layer);
+        });
+        Tronc_AP7_Vilablareix.eachLayer(function (layer) {
+          Tronc_AP7_Vilablareix.resetStyle(layer);
+        });
+        Remod_EnllaçVS.eachLayer(function (layer) {
+        });
+        GI9903.eachLayer(function (layer) {
+          GI9903.resetStyle(layer);
+        });
+        Remod_EnllaçVF.eachLayer(function (layer) {
+          Remod_EnllaçVF.resetStyle(layer);
+        });
+        Remod_EnllaçSSad.eachLayer(function (layer) {
+          Remod_EnllaçSSad.resetStyle(layer);
+        });
+        Remod_EnllaçGelida.eachLayer(function (layer) {
+          Remod_EnllaçGelida.resetStyle(layer);
+        });
+        Remod_EnllaçMartorell.eachLayer(function (layer) {
+          Remod_EnllaçMartorell.resetStyle(layer);
+        });
       });
 
       var drawnItems = new L.FeatureGroup();
@@ -522,16 +550,14 @@
                 }
             }
         });
-
+        
 
       Zoom.addTo(map)
       loadControl.addTo(map);
-
       loadControl.loader.on('data:loaded', function (e) {
             var layer = e.layer;
             console.log(layer);
         });
-
       PrintControl.addTo(map);
       map.addControl(searchControl);
       map.addControl(searchControl_2);
