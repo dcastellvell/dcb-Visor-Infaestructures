@@ -55,9 +55,15 @@
     <script src="src-draw/edit/handler/Edit.Circle.js"></script>
   <!-- Enllacem leaflet-buffer -->
     <script src="js/leaflet.buffer.min.js"></script>
+  <!-- Enllacem Leaflet.StyleEditor -->
+    <script src="js/Leaflet.StyleEditor.min.js"></script>
+    <link rel="stylesheet" href="css/Leaflet.StyleEditor.min.css" />
+
+    <script src="js/leaflet.geometryutil.js"></script>
+    <script src="js/leaflet.snap.js"></script>
   <!-- Enllacem leaflet-browser.print -->
     <script src="js/leaflet.browser.print.js"></script>
-  <!-- Enllacem leaflet-browser.print -->
+  <!-- Enllacem leaflet-panel-layers -->
     <link rel="stylesheet" href="css/leaflet-panel-layers.css"/>
     <script src="js/leaflet-panel-layers.js"></script>
   <!-- enllacem el controlador per carregar fitxers locals//primer enllacem amb togeoJson//-->
@@ -119,7 +125,7 @@
             continuousWorld: true,
             worldCopyJump: false,
             zoomControl: false,
-            preferCanvas: true
+            preferCanvas: true,
         });
         OrtoCache = L.tileLayer.wms("https://geoserveis.icgc.cat/icc_mapesbase/wms/service?", {
             layers: 'orto25c',
@@ -163,7 +169,7 @@
 
       Urbanistic = L.tileLayer.wms("http://dtes.gencat.cat/webmap/MUC/service.svc/get?", {
         layers: ['MUC', 'MUC_Codis_Mun'],
-        attribution:'Departament de Territori i Sostenibilitat Generalitat de Catalunya' 
+        attribution:'Mapa Urbanític de Catalunya' 
       });
 
       TermeMunis = L.tileLayer.wms("http://geoserveis.icc.cat/icgc_bm5m/wms/service?", {
@@ -300,14 +306,15 @@
           buffer: {
             replacePolylines: false,
             separateBuffer: true,
-            bufferStyle:{
-            dashArray: '2 5',
+            bufferStyle: {
+              dashArray: '2 5',
               opacity: 0.5,
-              fillColor: '#FF0000',}
+              fillColor: '#FF0000',
+            }
           },
         }
       });
-      
+
       L.drawLocal.draw.toolbar.buttons.polygon = 'Dibuixa un polígon';
       L.drawLocal.draw.toolbar.buttons.polyline = 'Dibuixa un línea';
       L.drawLocal.draw.toolbar.buttons.rectangle = 'Dibuixa un rectangle';
@@ -362,12 +369,12 @@
         } else if (layer instanceof L.Polygon) {
           var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
             area = L.GeometryUtil.geodesicArea(latlngs);
-            distance = 0;
-            for (var i = 0; i < latlngs.length - 1; i++) {
-              distance += latlngs[i].distanceTo(latlngs[i + 1]);
-            }
-          return "Distància: " + _round(distance, 2) + " m"+"<br />"
-            +"Àrea: " + L.GeometryUtil.readableArea(area, true);
+          distance = 0;
+          for (var i = 0; i < latlngs.length - 1; i++) {
+            distance += latlngs[i].distanceTo(latlngs[i + 1]);
+          }
+          return "Distància: " + _round(distance, 2) + " m" + "<br />"
+            + "Àrea: " + L.GeometryUtil.readableArea(area, true);
           // Polyline - distance
         } else if (layer instanceof L.Polyline) {
           var latlngs = layer._defaultShape ? layer._defaultShape() : layer.getLatLngs(),
@@ -404,109 +411,121 @@
         });
       });
 
+      var styleEditor = L.control.styleEditor({
+        position: "topleft",
+        useGrouping: false,
+        strings: {
+          cancel: 'Finalitzar',
+          cancelTitle: 'Finalitzar la edició',
+          tooltip: 'Clica sobre un element per modificar la seva aparença',
+          tooltipNext: 'Amaga la barra lateral',
+        },
+      });
+
+
       var baseMaps = [
         {
-        group:" Mapes Base",
-        layers:[
-        {
-        name:"Ortofoto vigent",
-        layer: OrtoCache
-      },
-        {
-          name:"Ortofoto 2008",
-          layer: orto08,
-        },
-        {
-          name:"Ortofoto 1994",
-          layer: orto94
-        },
-        {
-          name:"Vol Americà 56-57",
-          layer: orto56_57
-        },
-        {
-          name:"Topogràfic-icgc",
-          layer: TopoCache
-        },
-        {
-          name:"Cadastre",
-          layer: Cadastre
-        },
-        {
-          name:"Mapa Urbanístic de Catalunya",
-          layer: Urbanistic
-        },
-        ]
-      }
-    ];
-      var overlayMaps = [
-        { 
-          group:"Límits administratius",
-          collapsed: true,
-          layers:[
+          group: " Mapes Base",
+          layers: [
             {
-              name:"Termes Municipals",
-              layer:TermeMunis
+              name: "Ortofoto vigent",
+              layer: OrtoCache
             },
             {
-              name:"Termes comarca",
+              name: "Ortofoto 2008",
+              layer: orto08,
+            },
+            {
+              name: "Ortofoto 1994",
+              layer: orto94
+            },
+            {
+              name: "Vol Americà 56-57",
+              layer: orto56_57
+            },
+            {
+              name: "Topogràfic-icgc",
+              layer: TopoCache
+            },
+            {
+              name: "Cadastre",
+              layer: Cadastre
+            },
+            {
+              name: "Mapa Urbanístic de Catalunya",
+              layer: Urbanistic
+            },
+          ]
+        }
+      ];
+      var overlayMaps = [
+        {
+          group: "Límits administratius",
+          collapsed: true,
+          layers: [
+            {
+              name: "Termes Municipals",
+              layer: TermeMunis
+            },
+            {
+              name: "Termes comarca",
               layer: TermeComs
             },
             {
-              name:"Termes Provincia",
+              name: "Termes Provincia",
               layer: TermeProvs
             }
           ]
         },
         {
-          group:"Autopista AP-7",
-          layers:[
+          group: "Autopista AP-7",
+          layers: [
             {
-              name:"Tronc AP-7 Vila-Seca",
-              layer:Tronc_AP7_VilaS
+              name: "Tronc AP-7 Vila-Seca",
+              layer: Tronc_AP7_VilaS
             },
             {
-              name:"Enllaç Vila-Seca",
+              name: "Enllaç Vila-Seca",
               layer: Remod_EnllaçVS
             },
             {
-              name:"Enllaços Vilafranca",
-              layer:  Remod_EnllaçVF,
+              name: "Enllaços Vilafranca",
+              layer: Remod_EnllaçVF,
             },
             {
-              name:"Enllaç Sant Sadurní",
-              layer:Remod_EnllaçSSad
+              name: "Enllaç Sant Sadurní",
+              layer: Remod_EnllaçSSad
             },
             {
-              name:"Enllaç de Gelida",
-              layer:Remod_EnllaçGelida
+              name: "Enllaç de Gelida",
+              layer: Remod_EnllaçGelida
             },
             {
-              name:"Enllaç de Martorell",
-              layer:Remod_EnllaçMartorell
+              name: "Enllaç de Martorell",
+              layer: Remod_EnllaçMartorell
             },
             {
-              name:"Tronc AP-7 Vilablareix",
-              layer:Tronc_AP7_Vilablareix
+              name: "Tronc AP-7 Vilablareix",
+              layer: Tronc_AP7_Vilablareix
             },
             {
-              name:"Projecte 98-GI-9903",
-              layer:GI9903
+              name: "Projecte 98-GI-9903",
+              layer: GI9903
             },
           ]
         },
         {
-          name:"capa de dibuix",
+          name: "capa de dibuix",
           layer: drawnItems
         },
       ];
-      
+
       controlCapas = L.control.panelLayers(baseMaps, overlayMaps,
-      {
-	          // compact: true,
-	          // collapsed: true,	
-	      collapsibleGroups: true
-      });
+        {
+          // compact: true,
+          // collapsed: true,	
+          collapsibleGroups: true
+        });
 
         PrintControl = L.control.browserPrint({
         closePopupsOnPrint: false,
@@ -563,6 +582,7 @@
       map.addControl(drawControl);
       controlCapas.addTo(map)
       Escala.addTo(map);
+      map.addControl(styleEditor);
     });
 
    
