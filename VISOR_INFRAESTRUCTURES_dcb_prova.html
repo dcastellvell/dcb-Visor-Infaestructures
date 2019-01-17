@@ -104,7 +104,7 @@
     .icon {
       max-width: 70%;
       max-height: 70%;
-      margin: 54px;
+      margin: 4px;
     }
 
   </style>
@@ -287,8 +287,8 @@
         });
       });
 
-      var drawnItems = new L.FeatureGroup();
-      map.addLayer(drawnItems);
+      var drawnitems = new L.FeatureGroup();
+      map.addLayer(drawnitems);
 
       drawControl = new L.Control.Draw({
         position: 'topleft',
@@ -301,7 +301,7 @@
           circlemarker: false
         },
         edit: {
-          featureGroup: drawnItems,
+          featureGroup: drawnitems,
           remove: true,
           buffer: {
             replacePolylines: false,
@@ -397,7 +397,7 @@
         if (content !== null) {
           layer.bindPopup(content);
         }
-        drawnItems.addLayer(layer);
+        drawnitems.addLayer(layer);
       });
       // Object(s) edited - update popups
       map.on(L.Draw.Event.EDITED, function (event) {
@@ -414,10 +414,11 @@
       var styleEditor = L.control.styleEditor({
         position: "topleft",
         useGrouping: false,
+        openOnLeafletDraw: false,
         strings: {
           cancel: 'Finalitzar',
           cancelTitle: 'Finalitzar la edició',
-          tooltip: 'Clica sobre un element per modificar la seva aparença',
+          tooltip: 'Clica sobre un element per modificar-ne la aparença',
           tooltipNext: 'Amaga la barra lateral',
         },
       });
@@ -516,7 +517,7 @@
         },
         {
           name: "capa de dibuix",
-          layer: drawnItems
+          layer: drawnitems
         },
       ];
 
@@ -555,7 +556,7 @@
             clickable: false
         };
         L.Control.FileLayerLoad.TITLE= 'Carrega fitxers KML, GPX i GeoJson'
-        // L.Control.FileLayerLoad.LABEL = '<img class="icon" src="images/folder.svg" alt="file icon"/>';
+        L.Control.FileLayerLoad.LABEL = '<img class="icon" src="images/folder.svg" alt="file icon"/>';
         var loadControl = L.Control.fileLayerLoad({
             fitBounds: true,
             layerOptions: {
