@@ -66,7 +66,7 @@
   <!-- enllacem el controlador per carregar fitxers locals//primer enllacem amb togeoJson//-->
     <script src="https://unpkg.com/togeojson@0.16.0"></script> 
     <script src="js/leaflet.filelayer.js"></script>
-    
+  
 
   <style>
     ul,ol{list-style:none}
@@ -103,6 +103,8 @@
       max-height: 70%;
       margin: 4px;
     }
+    .leaflet-styleeditor-tooltip-wrapper{position:absolute;text-align:center;bottom:10%;width:100%;z-index:1000}
+    .leaflet-styleeditor-tooltip{color: beige ;background-color:#B40404; opacity: 0.7;border:2px solid rgba(0, 0, 0, 0.9);border-radius:5px;display:inline-block;font:10px/1"Helvetica Neue",Arial,Helvetica,sans-serif;font-weight:900; padding:10px;position:relative;}
 
   </style>
 <script>
@@ -408,6 +410,28 @@
         });
       });
 
+      var LoadControlStyle = {
+            color: 'red',
+            opacity: 1.0,
+            fillOpacity: 0.5,
+            weight: 2,
+            clickable: false
+        };
+        L.Control.FileLayerLoad.TITLE= 'Carrega fitxers KML, GPX i GeoJson'
+        L.Control.FileLayerLoad.LABEL = '<img class="icon" src="images/folder.svg" alt="file icon"/>';
+        var loadControl = L.Control.fileLayerLoad({
+            fitBounds: true,
+            layerOptions: {
+                style: LoadControlStyle,
+                pointToLayer: function (data, latlng) {
+                    return L.circleMarker(
+                        latlng,
+                        { style: LoadControlStyle }
+                    );
+                }
+            }
+        });
+
       var styleEditor = L.control.styleEditor({
         position: "topleft",
         useGrouping: false,
@@ -415,10 +439,11 @@
         strings: {
           cancel: 'Finalitzar',
           cancelTitle: 'Finalitzar la edició',
-          tooltip: 'Clica sobre un element per modificar-ne la aparença',
+          tooltip: 'Clica sobre un element',
           tooltipNext: 'Amaga la barra lateral',
         },
       });
+
 
       var baseMaps = [
         {
@@ -515,6 +540,10 @@
           name: "capa de dibuix",
           layer: drawnitems
         },
+        // {
+        //   name: "Objectes carregats",
+        //   layer: layer
+        // },
       ];
 
       controlCapas = L.control.panelLayers(baseMaps, overlayMaps,
@@ -544,27 +573,7 @@
         zoomOutTitle : 'Disminueix el zoom'
       });
 
-      var LoadControlStyle = {
-            color: 'red',
-            opacity: 1.0,
-            fillOpacity: 0.5,
-            weight: 2,
-            clickable: false
-        };
-        L.Control.FileLayerLoad.TITLE= 'Carrega fitxers KML, GPX i GeoJson'
-        L.Control.FileLayerLoad.LABEL = '<img class="icon" src="images/folder.svg" alt="file icon"/>';
-        var loadControl = L.Control.fileLayerLoad({
-            fitBounds: true,
-            layerOptions: {
-                style: LoadControlStyle,
-                pointToLayer: function (data, latlng) {
-                    return L.circleMarker(
-                        latlng,
-                        { style: LoadControlStyle }
-                    );
-                }
-            }
-        });
+      
         
 
       Zoom.addTo(map)
