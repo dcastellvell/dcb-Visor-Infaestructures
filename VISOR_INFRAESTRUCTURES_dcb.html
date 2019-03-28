@@ -13,7 +13,7 @@
         </script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.0/leaflet.js"></script>
   <!-- plugin Proj4Leaflet -->
-    <script src="http://rawgithub.com/kartena/Proj4Leaflet/master/lib/proj4-compressed.js"></script>
+    <script src="https://rawgithub.com/kartena/Proj4Leaflet/master/lib/proj4-compressed.js"></script>
     <script src="https://rawgithub.com/kartena/Proj4Leaflet/master/src/proj4leaflet.js"></script>
   <!-- pluguin GeoJSON AJAX -->
     <script src="https://calvinmetcalf.github.io/leaflet-ajax/dist/leaflet.ajax.js"></script>
@@ -158,7 +158,7 @@
         attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
       });
 
-      TopoCache = L.tileLayer.wms(" http://geoserveis.icc.cat/icc_mapesmultibase/utm/wmts/service?", {
+      TopoCache = L.tileLayer.wms(" https://geoserveis.icgc.cat/icc_mapesmultibase/utm/wmts/service?", {
         layers: 'topo',
         format: 'image/jpeg',
         crs: crs25831,
@@ -166,12 +166,12 @@
         attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
       });
 
-      Urbanistic = L.tileLayer.wms("http://dtes.gencat.cat/webmap/MUC/service.svc/get?", {
+      Urbanistic = L.tileLayer.wms("https://dtes.gencat.cat/webmap/MUC/service.svc/get?", {
         layers: ['MUC', 'MUC_Codis_Mun'],
         attribution:'Mapa Urbanític de Catalunya' 
       });
 
-      TermeMunis = L.tileLayer.wms("http://geoserveis.icc.cat/icgc_bm5m/wms/service?", {
+      TermeMunis = L.tileLayer.wms("https://geoserveis.icgc.cat/icgc_bm5m/wms/service?", {
         layers: ['10_MUNICIPI_PC','60_NOMMUNICIPI_TX'],
         format: 'image/png',
         crs: crs25831,
@@ -179,7 +179,7 @@
         continuousWorld: true,
         attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
       });
-      TermeComs = L.tileLayer.wms("http://geoserveis.icc.cat/icgc_bm5m/wms/service?", {
+      TermeComs = L.tileLayer.wms("https://geoserveis.icgc.cat/icgc_bm5m/wms/service?", {
         layers: ['20_COMARCA_PC','70_NOMCOMARCA_TX'],
         format: 'image/png',
         crs: crs25831,
@@ -187,7 +187,7 @@
         continuousWorld: true,
         attribution: 'Institut Cartogràfic i Geològic de Catalunya -ICGC',
       });
-      TermeProvs = L.tileLayer.wms("http://geoserveis.icc.cat/icgc_bm5m/wms/service?", {
+      TermeProvs = L.tileLayer.wms("https://geoserveis.icgc.cat/icgc_bm5m/wms/service?", {
         layers: '30_PROVINCIA_PC',
         format: 'image/png',
         crs: crs25831,
