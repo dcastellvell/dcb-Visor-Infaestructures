@@ -105,7 +105,13 @@
     }
     .leaflet-styleeditor-tooltip-wrapper{position:absolute;text-align:center;bottom:10%;width:100%;z-index:1000}
     .leaflet-styleeditor-tooltip{color: beige ;background-color:#B40404; opacity: 0.7;border:2px solid rgba(0, 0, 0, 0.9);border-radius:5px;display:inline-block;font:10px/1"Helvetica Neue",Arial,Helvetica,sans-serif;font-weight:900; padding:10px;position:relative;}
-
+    .icon-exp {
+      display: inline-block;
+	    margin: 2px;
+	    height: 12px;
+	    width: 12px;
+	    background-color: #ccc;
+      }
   </style>
 <script>
     var map, Ortocache, orto56_57, orto94, orto08, TopoCache, TermeMunis, TermeComs, TermeProvs, Cadastre, Urbanistic;
@@ -504,34 +510,42 @@
           layers: [
             {
               name: "Tronc AP-7 Vila-Seca",
+              icon: '<img class="icon-exp" src="images/Lleg_exp.png">',
               layer: Tronc_AP7_VilaS
             },
             {
               name: "Enllaç Vila-Seca",
+              icon: '<img class="icon-exp" src="images/Lleg_exp.png">',
               layer: Remod_EnllaçVS
             },
             {
               name: "Enllaços Vilafranca",
+              icon: '<img class="icon-exp" src="images/Lleg_exp.png">',
               layer: Remod_EnllaçVF,
             },
             {
               name: "Enllaç Sant Sadurní",
+              icon: '<img class="icon-exp" src="images/Lleg_exp.png">',
               layer: Remod_EnllaçSSad
             },
             {
               name: "Enllaç de Gelida",
+              icon: '<img class="icon-exp" src="images/Lleg_exp.png">',
               layer: Remod_EnllaçGelida
             },
             {
               name: "Enllaç de Martorell",
+              icon: '<img class="icon-exp" src="images/Lleg_exp.png">',
               layer: Remod_EnllaçMartorell
             },
             {
               name: "Tronc AP-7 Vilablareix",
+              icon: '<img class="icon-exp" src="images/Lleg_exp.png">',
               layer: Tronc_AP7_Vilablareix
             },
             {
               name: "Projecte 98-GI-9903",
+              icon: '<img class="icon-exp" src="images/Lleg_exp.png">',
               layer: GI9903
             },
           ]
